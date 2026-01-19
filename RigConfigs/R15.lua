@@ -3,14 +3,14 @@
 local RigConfigType = require(script.Parent.RigConfigType)
 type SocketLimits = RigConfigType.SocketLimits
 
-local HeadLimits: SocketLimits = {MaxFrictionTorque = 55, UpperAngle = 15, TwistLowerAngle = -25, TwistUpperAngle = 25}
-local UpperTorsoLimits: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 30, TwistLowerAngle = -40, TwistUpperAngle = 40}
-local LowerTorsoLimits: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 30, TwistLowerAngle = -180, TwistUpperAngle = 180}
-local UpperArmsLimits: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 35, TwistLowerAngle = -180, TwistUpperAngle = 180}
-local LowerArmsLimits: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 0, TwistLowerAngle = -5, TwistUpperAngle = 160}
-local UpperLegsLimits: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 30, TwistLowerAngle = -5, TwistUpperAngle = 20}
-local LowerLegsLimits: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 0, TwistLowerAngle = -45, TwistUpperAngle = 10}
-local HandsFeetsLimits: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 10, TwistLowerAngle = -45, TwistUpperAngle = 25}
+local NECK_LIMITS: SocketLimits = {MaxFrictionTorque = 55, UpperAngle = 15, TwistLowerAngle = -25, TwistUpperAngle = 25}
+local WAIST_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 30, TwistLowerAngle = -40, TwistUpperAngle = 40}
+local SHOULDER_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 35, TwistLowerAngle = -180, TwistUpperAngle = 180}
+local ELBOW_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 0, TwistLowerAngle = -5, TwistUpperAngle = 160}
+local HIP_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 30, TwistLowerAngle = -5, TwistUpperAngle = 20}
+local KNEE_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 0, TwistLowerAngle = -45, TwistUpperAngle = 10}
+local WRIST_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 20, TwistLowerAngle = -70, TwistUpperAngle = 40}
+local ANKLE_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 10, TwistLowerAngle = -45, TwistUpperAngle = 25}
 
 local Config: RigConfigType.RigConfig = {
 	Animator = {"Humanoid", "Animator"},
@@ -57,24 +57,24 @@ local Config: RigConfigType.RigConfig = {
 		LeftAnkle = {"LeftFoot","LeftAnkle"},
 	},
 	Sockets = {
-		Neck = HeadLimits,
-		Waist = UpperTorsoLimits,
+		Neck = NECK_LIMITS,
+		Waist = WAIST_LIMITS,
 		
-		LeftShoulder = UpperArmsLimits,
-		LeftElbow = LowerArmsLimits,
-		LeftWrist = HandsFeetsLimits,
+		LeftShoulder = SHOULDER_LIMITS,
+		LeftElbow = ELBOW_LIMITS,
+		LeftWrist = WRIST_LIMITS,
 
-		RightShoulder = UpperArmsLimits,
-		RightElbow = LowerArmsLimits,
-		RightWrist = HandsFeetsLimits,
+		RightShoulder = SHOULDER_LIMITS,
+		RightElbow = ELBOW_LIMITS,
+		RightWrist = WRIST_LIMITS,
 
-		RightHip = UpperLegsLimits,
-		RightKnee = LowerLegsLimits,
-		RightAnkle = HandsFeetsLimits,
+		RightHip = HIP_LIMITS,
+		RightKnee = KNEE_LIMITS,
+		RightAnkle = ANKLE_LIMITS,
 
-		LeftHip = UpperLegsLimits,
-		LeftKnee = LowerLegsLimits,
-		LeftAnkle = HandsFeetsLimits,
+		LeftHip = HIP_LIMITS,
+		LeftKnee = KNEE_LIMITS,
+		LeftAnkle = ANKLE_LIMITS,
 	},
 	NoCollisionConstraints = {
 		{"HumanoidRootPart","UpperTorso"},

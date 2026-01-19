@@ -3,23 +3,9 @@
 local RigConfigType = require(script.Parent.RigConfigType)
 type SocketLimits = RigConfigType.SocketLimits
 
-local HEAD_LIMITS: SocketLimits = {
-	UpperAngle = 30,
-	TwistLowerAngle = -60,
-	TwistUpperAngle = 60,
-}
-
-local SHOULDER_LIMITS: SocketLimits = {
-	UpperAngle = 90,
-	TwistLowerAngle = -30,
-	TwistUpperAngle = 175,
-}
-
-local HIP_LIMITS: SocketLimits = {
-	UpperAngle = 60,
-	TwistLowerAngle = -5,
-	TwistUpperAngle = 120,
-}
+local NECK_LIMITS: SocketLimits = {UpperAngle = 30, TwistLowerAngle = -60, TwistUpperAngle = 60}
+local SHOULDER_LIMITS: SocketLimits = {UpperAngle = 90, TwistLowerAngle = -30, TwistUpperAngle = 175}
+local HIP_LIMITS: SocketLimits = {UpperAngle = 60, TwistLowerAngle = -5, TwistUpperAngle = 120}
 
 local Config: RigConfigType.RigConfig = {
 	Animator = {"Humanoid", "Animator"},
@@ -44,7 +30,7 @@ local Config: RigConfigType.RigConfig = {
 		LeftHip = {"Torso", "Left Hip"},
 	},
 	Sockets = {
-		Neck = HEAD_LIMITS,
+		Neck = NECK_LIMITS,
 		RightShoulder = SHOULDER_LIMITS,
 		LeftShoulder = SHOULDER_LIMITS,
 		RightHip = HIP_LIMITS,

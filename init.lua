@@ -1,4 +1,5 @@
 --!strict
+--!optimize 2
 
 local RagdollService = {}
 
@@ -19,7 +20,6 @@ type CharacterRagdollInfo = {
 	Animator: Animator?,
 	Humanoid: Humanoid?,
 	RootPart: BasePart,
-	Ownership: Player | "Auto" | nil,
 	Limbs: {[string]: BasePart},
 	Joints: {[string]: Motor6D},
 	Sockets: {[string]: BallSocketConstraint},
@@ -28,6 +28,7 @@ type CharacterRagdollInfo = {
 	Connections: {RBXScriptConnection},
 }
 local CharacterRagdollInfos = {} :: {[Model]: CharacterRagdollInfo}
+
 local RagdollRemote: RemoteEvent
 
 local function StudioWarn(msg: string)
@@ -45,14 +46,10 @@ else
 	RagdollRemote.OnClientEvent:Connect(function(enabled: boolean, ragdoll_type: string)
 		local player = Players.LocalPlayer :: Player
 		local character = player.Character
-		if not character then return end
+		if not character or not character:IsDescendantOf(workspace) then return end
 		
 		local config = RigConfigs[ragdoll_type]
-		
-		local root_part: BasePart?
-		if config.Humanoid then
-			root_part = InstanceQuery:Get(character, config.RootPart)
-		end
+		local root_part = InstanceQuery:Get(character, config.RootPart) :: BasePart
 		
 		local humanoid: Humanoid?
 		if config.Humanoid then
@@ -97,18 +94,13 @@ else
 			animate.Enabled = false
 		end
 		
-		if root_part then
-			root_part:ApplyAngularImpulse(root_part.CFrame.RightVector * 50)
-		end
+		-- Give the character bit of angular momentum to break the balance
+		root_part:ApplyAngularImpulse(root_part.CFrame.RightVector * 50)
 	end)
 end
 
 local function IsModel(value: any)
 	return typeof(value) == "Instance" and value:IsA("Model")
-end
-
-local function GetCharacterRagdollInfo(character: Model): CharacterRagdollInfo?
-	return CharacterRagdollInfos[character]
 end
 
 local function IsRagdolled(character: Model): boolean
@@ -139,7 +131,7 @@ local function GetRigType(character: Model): string
 end
 
 local function DestroyRagdoll(character: Model)
-	local info = GetCharacterRagdollInfo(character)
+	local info = CharacterRagdollInfos[character]
 	if not info then return end
 	
 	for _, no_collision in info.NoCollisionConstraints do
@@ -168,8 +160,6 @@ local function SetupRagdoll(character: Model, rig_type: string?): boolean
 	info.NoCollisionConstraints = {}
 	info.Connections = {}
 	
-	local player = Players:GetPlayerFromCharacter(character)
-	
 	local rig_type = rig_type or GetRigType(character)
 	local config = RigConfigs[rig_type]
 	if not config then
@@ -181,16 +171,6 @@ local function SetupRagdoll(character: Model, rig_type: string?): boolean
 		error(`[RagdollService]: No root part found with path: {table.concat(config.RootPart, ".")}`)
 	end
 	info.RootPart = root_part
-	
-	if player then
-		info.Ownership = player
-	else
-		if root_part:GetNetworkOwnershipAuto() then
-			info.Ownership = "Auto"
-		else
-			info.Ownership = root_part:GetNetworkOwner() :: any
-		end
-	end
 	
 	if config.Humanoid then
 		local humanoid: Humanoid? = InstanceQuery:Get(character, config.Humanoid)
@@ -267,6 +247,9 @@ local function SetupRagdoll(character: Model, rig_type: string?): boolean
 		socket.TwistLowerAngle = socket_limits.TwistLowerAngle
 		socket.TwistUpperAngle = socket_limits.TwistUpperAngle
 		socket.Parent = attachment0.Parent
+		
+		table.insert(info.Attachments, attachment0)
+		table.insert(info.Attachments, attachment1)
 
 		info.Sockets[name] = socket
 		info.Joints[name] = motor6d
@@ -286,6 +269,12 @@ local function SetupRagdoll(character: Model, rig_type: string?): boolean
 
 		table.insert(info.NoCollisionConstraints, no_collision)
 	end
+	
+	table.insert(info.Connections, character.AncestryChanged:Once(function(child, parent)
+		if parent == nil then
+			DestroyRagdoll(character)
+		end
+	end))
 	
 	table.insert(info.Connections, character.Destroying:Once(function()
 		DestroyRagdoll(character)
@@ -308,16 +297,10 @@ local function ActivateRagdoll(character: Model): boolean
 	if player then
 		RagdollRemote:FireClient(player, true, info.RigType)
 	end
-	
-	-- Transfer ownerhip to server temporarily to activate ragdoll
-	if info.RootPart then
-		info.RootPart:SetNetworkOwner(nil)
-	end
 
 	if info.Humanoid and info.Humanoid.Health ~= 0 then
 		local humanoid = info.Humanoid
 		humanoid.RequiresNeck = false
-		humanoid.PlatformStand = true
 		humanoid.AutoRotate = false
 		humanoid:ChangeState(Enum.HumanoidStateType.Physics)
 	end
@@ -337,12 +320,9 @@ local function ActivateRagdoll(character: Model): boolean
 		no_collision.Enabled = true
 	end
 	
-	if info.RootPart then
-		if info.Ownership == "Auto" then
-			info.RootPart:SetNetworkOwnershipAuto()
-		else
-			info.RootPart:SetNetworkOwner(info.Ownership)
-		end
+	-- Break the ragdoll balance on server if owned by server
+	if info.RootPart:GetNetworkOwner() == nil then
+		info.RootPart:ApplyAngularImpulse(info.RootPart.CFrame.RightVector * 50)
 	end
 	
 	return true
@@ -358,7 +338,6 @@ local function DeactivateRagdoll(character: Model): boolean
 	if info.Humanoid and info.Humanoid.Health ~= 0 then
 		local humanoid = info.Humanoid
 		humanoid.RequiresNeck = true
-		humanoid.PlatformStand = false
 		humanoid.AutoRotate = true
 
 		humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
@@ -367,12 +346,6 @@ local function DeactivateRagdoll(character: Model): boolean
 	local player = Players:GetPlayerFromCharacter(character)
 	if player then
 		RagdollRemote:FireClient(player, false, info.RigType)
-	end
-
-	if info.Ownership == "Auto" then
-		info.RootPart:SetNetworkOwnershipAuto()
-	else
-		info.RootPart:SetNetworkOwner(info.Ownership)
 	end
 	
 	for _, motor6d in info.Joints do
