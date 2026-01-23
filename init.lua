@@ -43,6 +43,7 @@ if RunService:IsServer() then
 else
 	RagdollRemote = script:WaitForChild("RagdollRemote") :: any
 	RagdollRemote.OnClientEvent:Connect(function(enabled: boolean, ragdoll_type: string)
+		warn(enabled, ragdoll_type)
 		local player = Players.LocalPlayer :: Player
 		local character = player.Character
 		if not character or not character:IsDescendantOf(workspace) then return end
@@ -62,30 +63,38 @@ else
 
 		if humanoid and humanoid.Health ~= 0 then
 			if enabled then
-				-- Transition Animate script to "PlatformStanding" pose to fix camera swing issue
 				if config.HasDefaultAnimate == true then
+					-- Transition Animate script to "PlatformStanding" pose to fix camera swing issue
 					humanoid:ChangeState(Enum.HumanoidStateType.PlatformStanding)
 					task.wait()
 					-- Check if ragdoll activated and deactivated on the same frame
-					if humanoid:GetState() ~= Enum.HumanoidStateType.GettingUp then
+					if humanoid:GetState() == Enum.HumanoidStateType.PlatformStanding then
 						humanoid:ChangeState(Enum.HumanoidStateType.Physics)
 					end
 				else
 					humanoid:ChangeState(Enum.HumanoidStateType.Physics)
 				end
+				
+				-- Give the character bit of angular momentum to break the balance
+				root_part:ApplyAngularImpulse(root_part.CFrame.RightVector * 50)
 			else
 				humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 			end
 		end
 		
-		if animator then
-			for _, track in animator:GetPlayingAnimationTracks() do
-				track:Stop(0)
+		if enabled then
+			if animator then
+				for _, track in animator:GetPlayingAnimationTracks() do
+					if track.Priority ~= Enum.AnimationPriority.Core then
+						-- Stop tracks that are not used by the Animate script
+						track:Stop(0)
+					else
+						-- Pause core animations to fix camera swing before animate stepAnimate
+						track:AdjustSpeed(0)
+					end
+				end
 			end
 		end
-		
-		-- Give the character bit of angular momentum to break the balance
-		root_part:ApplyAngularImpulse(root_part.CFrame.RightVector * 50)
 	end)
 end
 
