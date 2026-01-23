@@ -16,7 +16,7 @@ export type RigConfig = {
 	Animator: PathArray?,
 	Humanoid: PathArray?,
 	BreakJointsOnDeath: boolean?,
-	Animate: PathArray?,
+	HasDefaultAnimate: boolean?,
 	RootPart: PathArray,
 	Joints: {[string]: PathArray},
 	Limbs: {[string]: PathArray},

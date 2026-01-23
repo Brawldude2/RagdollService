@@ -41,7 +41,6 @@ if RunService:IsServer() then
 	RagdollRemote.Name = "RagdollRemote"
 	RagdollRemote.Parent = script
 else
-	local LastAnimateState: boolean?
 	RagdollRemote = script:WaitForChild("RagdollRemote") :: any
 	RagdollRemote.OnClientEvent:Connect(function(enabled: boolean, ragdoll_type: string)
 		local player = Players.LocalPlayer :: Player
@@ -56,42 +55,33 @@ else
 			humanoid = InstanceQuery:Get(character, config.Humanoid)
 		end
 		
-		local animate: LocalScript?
-		if config.Animate then
-			animate = InstanceQuery:Get(character, config.Animate)
-		end
-		
 		local animator: Animator?
 		if config.Animator then
 			animator = InstanceQuery:Get(character, config.Animator)
 		end
-		
-		if not enabled and animate then
-			if LastAnimateState ~= nil then
-				animate.Enabled = LastAnimateState
-				LastAnimateState = nil
-			else
-				animate.Enabled = true
-			end
-		end
-		
+
 		if humanoid and humanoid.Health ~= 0 then
 			if enabled then
-				humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+				-- Transition Animate script to "PlatformStanding" pose to fix camera swing issue
+				if config.HasDefaultAnimate == true then
+					humanoid:ChangeState(Enum.HumanoidStateType.PlatformStanding)
+					task.wait()
+					-- Check if ragdoll activated and deactivated on the same frame
+					if humanoid:GetState() ~= Enum.HumanoidStateType.GettingUp then
+						humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+					end
+				else
+					humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+				end
 			else
 				humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 			end
 		end
 		
-		if enabled and animator then
+		if animator then
 			for _, track in animator:GetPlayingAnimationTracks() do
 				track:Stop(0)
 			end
-		end
-		
-		if enabled and animate then
-			LastAnimateState = animate.Enabled
-			animate.Enabled = false
 		end
 		
 		-- Give the character bit of angular momentum to break the balance
@@ -159,6 +149,8 @@ local function SetupRagdoll(character: Model, rig_type: string?): boolean
 	info.Sockets = {}
 	info.NoCollisionConstraints = {}
 	info.Connections = {}
+	
+	local player = Players:GetPlayerFromCharacter(character)
 	
 	local rig_type = rig_type or GetRigType(character)
 	local config = RigConfigs[rig_type]
@@ -302,6 +294,7 @@ local function ActivateRagdoll(character: Model): boolean
 		local humanoid = info.Humanoid
 		humanoid.RequiresNeck = false
 		humanoid.AutoRotate = false
+		humanoid.PlatformStand = true
 		humanoid:ChangeState(Enum.HumanoidStateType.Physics)
 	end
 
@@ -339,7 +332,7 @@ local function DeactivateRagdoll(character: Model): boolean
 		local humanoid = info.Humanoid
 		humanoid.RequiresNeck = true
 		humanoid.AutoRotate = true
-
+		humanoid.PlatformStand = false
 		humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
 	end
 
