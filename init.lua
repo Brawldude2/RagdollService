@@ -43,7 +43,6 @@ if RunService:IsServer() then
 else
 	RagdollRemote = script:WaitForChild("RagdollRemote") :: any
 	RagdollRemote.OnClientEvent:Connect(function(enabled: boolean, ragdoll_type: string)
-		warn(enabled, ragdoll_type)
 		local player = Players.LocalPlayer :: Player
 		local character = player.Character
 		if not character or not character:IsDescendantOf(workspace) then return end
