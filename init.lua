@@ -297,7 +297,10 @@ local function ActivateRagdoll(character: Model): boolean
 	if player then
 		RagdollRemote:FireClient(player, true, info.RigType)
 	end
-
+	
+	local previous_owner: any = info.RootPart:GetNetworkOwner()
+	info.RootPart:SetNetworkOwner(nil)
+	
 	if info.Humanoid and info.Humanoid.Health ~= 0 then
 		local humanoid = info.Humanoid
 		humanoid.RequiresNeck = false
@@ -320,6 +323,8 @@ local function ActivateRagdoll(character: Model): boolean
 	for _, no_collision in info.NoCollisionConstraints do
 		no_collision.Enabled = true
 	end
+	
+	info.RootPart:SetNetworkOwner(previous_owner)
 	
 	-- Break the ragdoll balance on server if owned by server
 	if info.RootPart:GetNetworkOwner() == nil then
