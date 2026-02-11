@@ -12,6 +12,8 @@ local RigConfigs = require(script.RigConfigs)
 local RigConfigType = require(script.RigConfigs.RigConfigType)
 
 local IsStudio = RunService:IsStudio()
+local IsServer = RunService:IsServer()
+local IsClient = RunService:IsClient()
 
 type CharacterRagdollInfo = {
 	Ragdolled: boolean,
@@ -36,7 +38,7 @@ local function StudioWarn(msg: string)
 	warn(`[RagdollService]: {msg}`)
 end
 
-if RunService:IsServer() then
+if IsServer then
 	RagdollRemote = Instance.new("RemoteEvent")
 	RagdollRemote.Name = "RagdollRemote"
 	RagdollRemote.Parent = script
@@ -298,8 +300,11 @@ local function ActivateRagdoll(character: Model): boolean
 		RagdollRemote:FireClient(player, true, info.RigType)
 	end
 	
-	local previous_owner: any = info.RootPart:GetNetworkOwner()
-	info.RootPart:SetNetworkOwner(nil)
+	local previous_owner: any
+	if IsServer then
+		previous_owner = info.RootPart:GetNetworkOwner()
+		info.RootPart:SetNetworkOwner(nil)
+	end
 	
 	if info.Humanoid and info.Humanoid.Health ~= 0 then
 		local humanoid = info.Humanoid
@@ -324,10 +329,12 @@ local function ActivateRagdoll(character: Model): boolean
 		no_collision.Enabled = true
 	end
 	
-	info.RootPart:SetNetworkOwner(previous_owner)
+	if IsServer then
+		info.RootPart:SetNetworkOwner(previous_owner)
+	end
 	
-	-- Break the ragdoll balance on server if owned by server
-	if info.RootPart:GetNetworkOwner() == nil then
+	-- Break the ragdoll balance on server if owned by server on client if local rig
+	if IsClient or info.RootPart:GetNetworkOwner() == nil then
 		info.RootPart:ApplyAngularImpulse(info.RootPart.CFrame.RightVector * 50)
 	end
 	
