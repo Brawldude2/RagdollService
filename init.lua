@@ -38,6 +38,12 @@ local function StudioWarn(msg: string)
 	warn(`[RagdollService]: {msg}`)
 end
 
+local function SafeChangeState(humanoid: Humanoid, state: Enum.HumanoidStateType)
+	if humanoid:GetState() ~= Enum.HumanoidStateType.Dead then
+		humanoid:ChangeState(state)
+	end
+end
+
 if IsServer then
 	RagdollRemote = Instance.new("RemoteEvent")
 	RagdollRemote.Name = "RagdollRemote"
@@ -62,37 +68,35 @@ else
 			animator = InstanceQuery:Get(character, config.Animator)
 		end
 
-		if humanoid and humanoid.Health ~= 0 then
+		if humanoid then
 			if enabled then
 				if config.HasDefaultAnimate == true then
 					-- Transition Animate script to "PlatformStanding" pose to fix camera swing issue
-					humanoid:ChangeState(Enum.HumanoidStateType.PlatformStanding)
+					SafeChangeState(humanoid, Enum.HumanoidStateType.PlatformStanding)
 					task.wait()
 					-- Check if ragdoll activated and deactivated on the same frame
 					if humanoid:GetState() == Enum.HumanoidStateType.PlatformStanding then
-						humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+						SafeChangeState(humanoid, Enum.HumanoidStateType.Physics)
 					end
 				else
-					humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+					SafeChangeState(humanoid, Enum.HumanoidStateType.Physics)
 				end
 				
 				-- Give the character bit of angular momentum to break the balance
 				root_part:ApplyAngularImpulse(root_part.CFrame.RightVector * 50)
 			else
-				humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+				SafeChangeState(humanoid, Enum.HumanoidStateType.GettingUp)
 			end
 		end
 		
-		if enabled then
-			if animator then
-				for _, track in animator:GetPlayingAnimationTracks() do
-					if track.Priority ~= Enum.AnimationPriority.Core then
-						-- Stop tracks that are not used by the Animate script
-						track:Stop(0)
-					else
-						-- Pause core animations to fix camera swing before animate stepAnimate
-						track:AdjustSpeed(0)
-					end
+		if enabled and animator then
+			for _, track in animator:GetPlayingAnimationTracks() do
+				if track.Priority ~= Enum.AnimationPriority.Core then
+					-- Stop tracks that are not used by the Animate script
+					track:Stop(0)
+				else
+					-- Pause core animations to fix camera swing before animate stepAnimate
+					track:AdjustSpeed(0)
 				end
 			end
 		end
@@ -306,12 +310,15 @@ local function ActivateRagdoll(character: Model): boolean
 		info.RootPart:SetNetworkOwner(nil)
 	end
 	
-	if info.Humanoid and info.Humanoid.Health ~= 0 then
+	if info.Humanoid then
 		local humanoid = info.Humanoid
 		humanoid.RequiresNeck = false
 		humanoid.AutoRotate = false
 		humanoid.PlatformStand = true
-		humanoid:ChangeState(Enum.HumanoidStateType.Physics)
+		
+		-- Prevent death sound from playing twice
+		-- If Humanoid is dead it forces itself back to Dead state whenever ChangeState is called
+		SafeChangeState(humanoid, Enum.HumanoidStateType.Physics)
 	end
 
 	if info.Animator then
@@ -348,12 +355,13 @@ local function DeactivateRagdoll(character: Model): boolean
 	if not info or not info.Ragdolled then return false end
 	info.Ragdolled = false
 
-	if info.Humanoid and info.Humanoid.Health ~= 0 then
+	if info.Humanoid then
 		local humanoid = info.Humanoid
 		humanoid.RequiresNeck = true
 		humanoid.AutoRotate = true
 		humanoid.PlatformStand = false
-		humanoid:ChangeState(Enum.HumanoidStateType.GettingUp)
+		
+		SafeChangeState(humanoid, Enum.HumanoidStateType.GettingUp)
 	end
 
 	local player = Players:GetPlayerFromCharacter(character)
