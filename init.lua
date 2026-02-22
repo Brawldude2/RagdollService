@@ -57,6 +57,7 @@ else
 		
 		local config = RigConfigs[ragdoll_type]
 		local root_part = InstanceQuery:Get(character, config.RootPart) :: BasePart
+		if not root_part then return end
 		
 		local humanoid: Humanoid?
 		if config.Humanoid then
@@ -74,10 +75,14 @@ else
 					-- Transition Animate script to "PlatformStanding" pose to fix camera swing issue
 					SafeChangeState(humanoid, Enum.HumanoidStateType.PlatformStanding)
 					task.wait()
+					
 					-- Check if ragdoll activated and deactivated on the same frame
 					if humanoid:GetState() == Enum.HumanoidStateType.PlatformStanding then
 						SafeChangeState(humanoid, Enum.HumanoidStateType.Physics)
 					end
+					
+					-- Fix engine bug where exiting "PlatformStanding" state toggles off platform stand
+					task.delay(0, function() humanoid.PlatformStand = true end)
 				else
 					SafeChangeState(humanoid, Enum.HumanoidStateType.Physics)
 				end
