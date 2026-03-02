@@ -15,6 +15,7 @@ local IsStudio = RunService:IsStudio()
 local IsServer = RunService:IsServer()
 local IsClient = RunService:IsClient()
 
+type NetworkOwner = Player?
 type CharacterRagdollInfo = {
 	Ragdolled: boolean,
 	RigType: string,
@@ -41,6 +42,12 @@ end
 local function SafeChangeState(humanoid: Humanoid, state: Enum.HumanoidStateType)
 	if humanoid:GetState() ~= Enum.HumanoidStateType.Dead then
 		humanoid:ChangeState(state)
+	end
+end
+
+local function SafeSetNetworkOwner(part: BasePart, owner: Player?)
+	if part:CanSetNetworkOwnership() then
+		part:SetNetworkOwner(owner)
 	end
 end
 
@@ -304,18 +311,20 @@ local function ActivateRagdoll(character: Model): boolean
 	local info = CharacterRagdollInfos[character]
 	if not info or info.Ragdolled then return false end
 	info.Ragdolled = true
-	
+
 	local player = Players:GetPlayerFromCharacter(character)
 	if player then
 		RagdollRemote:FireClient(player, true, info.RigType)
 	end
-	
-	local previous_owner: any
+
+	local previous_owner: NetworkOwner | false = false
 	if IsServer then
-		previous_owner = info.RootPart:GetNetworkOwner()
-		info.RootPart:SetNetworkOwner(nil)
+		if info.RootPart:IsDescendantOf(workspace) then
+			previous_owner = info.RootPart:GetNetworkOwner() :: any
+		end
+		SafeSetNetworkOwner(info.RootPart, nil)
 	end
-	
+
 	if info.Humanoid then
 		local humanoid = info.Humanoid
 		-- Prevent death sound from playing twice
@@ -341,16 +350,17 @@ local function ActivateRagdoll(character: Model): boolean
 	for _, no_collision in info.NoCollisionConstraints do
 		no_collision.Enabled = true
 	end
-	
-	if IsServer then
-		info.RootPart:SetNetworkOwner(previous_owner)
+
+	-- If there was a previous owner
+	if previous_owner ~= false then
+		SafeSetNetworkOwner(info.RootPart, previous_owner)
 	end
-	
+
 	-- Break the ragdoll balance on server if owned by server on client if local rig
 	if IsClient or info.RootPart:GetNetworkOwner() == nil then
 		info.RootPart:ApplyAngularImpulse(info.RootPart.CFrame.RightVector * 50)
 	end
-	
+
 	return true
 end
 
