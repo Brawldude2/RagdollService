@@ -1,18 +1,17 @@
 --!strict
 
-local RigConfigType = require(script.Parent.RigConfigType)
-type SocketLimits = RigConfigType.SocketLimits
+local Types = require(script.Parent.Parent.Types)
+type SocketLimits = Types.SocketLimits
 
-local NECK_LIMITS: SocketLimits = {UpperAngle = 30, TwistLowerAngle = -60, TwistUpperAngle = 60}
-local SHOULDER_LIMITS: SocketLimits = {UpperAngle = 90, TwistLowerAngle = -30, TwistUpperAngle = 175}
-local HIP_LIMITS: SocketLimits = {UpperAngle = 60, TwistLowerAngle = -5, TwistUpperAngle = 120}
+local NECK_LIMITS: SocketLimits = {MaxFrictionTorque = 10, UpperAngle = 30, TwistLowerAngle = -60, TwistUpperAngle = 60}
+local SHOULDER_LIMITS: SocketLimits = {MaxFrictionTorque = 10, UpperAngle = 90, TwistLowerAngle = -45, TwistUpperAngle = 175}
+local HIP_LIMITS: SocketLimits = {MaxFrictionTorque = 10, UpperAngle = 60, TwistLowerAngle = -25, TwistUpperAngle = 120}
 
-local Config: RigConfigType.RigConfig = {
+local Config: Types.RigConfig = {
 	Animator = {"Humanoid", "Animator"},
 	Humanoid = {"Humanoid"},
-	BreakJointsOnDeath = false,
-	HasDefaultAnimate = true,
 	RootPart = {"HumanoidRootPart"},
+	CameraSubject = {"Head"},
 	Limbs = {
 		["HumanoidRootPart"] = {"HumanoidRootPart"},
 		["Head"] = {"Head"},

@@ -1,0 +1,17 @@
+{
+  "name": "project",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "RagdollService": {
+        "$path": "src",
+        "$properties": {
+          "Attributes": {
+            "Version": {"String": "2.0"}
+          }
+        }
+      }
+    }
+  }
+}

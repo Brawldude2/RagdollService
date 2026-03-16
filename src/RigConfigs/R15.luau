@@ -1,23 +1,22 @@
 --!strict
 
-local RigConfigType = require(script.Parent.RigConfigType)
-type SocketLimits = RigConfigType.SocketLimits
+local Types = require(script.Parent.Parent.Types)
+type SocketLimits = Types.SocketLimits
 
 local NECK_LIMITS: SocketLimits = {MaxFrictionTorque = 55, UpperAngle = 15, TwistLowerAngle = -25, TwistUpperAngle = 25}
-local WAIST_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 30, TwistLowerAngle = -40, TwistUpperAngle = 40}
-local SHOULDER_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 35, TwistLowerAngle = -180, TwistUpperAngle = 180}
-local ELBOW_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 0, TwistLowerAngle = -5, TwistUpperAngle = 160}
-local HIP_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 30, TwistLowerAngle = -5, TwistUpperAngle = 20}
-local KNEE_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 0, TwistLowerAngle = -45, TwistUpperAngle = 10}
-local WRIST_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 20, TwistLowerAngle = -70, TwistUpperAngle = 40}
-local ANKLE_LIMITS: SocketLimits = {MaxFrictionTorque = 100, UpperAngle = 10, TwistLowerAngle = -45, TwistUpperAngle = 25}
+local WAIST_LIMITS: SocketLimits = {MaxFrictionTorque = 25, UpperAngle = 40, TwistLowerAngle = -45, TwistUpperAngle = 40}
+local SHOULDER_LIMITS: SocketLimits = {MaxFrictionTorque = 25, UpperAngle = 60, TwistLowerAngle = -180, TwistUpperAngle = 180}
+local ELBOW_LIMITS: SocketLimits = {MaxFrictionTorque = 25, UpperAngle = 5, TwistLowerAngle = -20, TwistUpperAngle = 160}
+local HIP_LIMITS: SocketLimits = {MaxFrictionTorque = 25, UpperAngle = 50, TwistLowerAngle = -30, TwistUpperAngle = 30}
+local KNEE_LIMITS: SocketLimits = {MaxFrictionTorque = 25, UpperAngle = 5, TwistLowerAngle = -50, TwistUpperAngle = 10}
+local WRIST_LIMITS: SocketLimits = {MaxFrictionTorque = 25, UpperAngle = 20, TwistLowerAngle = -70, TwistUpperAngle = 40}
+local ANKLE_LIMITS: SocketLimits = {MaxFrictionTorque = 25, UpperAngle = 10, TwistLowerAngle = -45, TwistUpperAngle = 25}
 
-local Config: RigConfigType.RigConfig = {
+local Config: Types.RigConfig = {
 	Animator = {"Humanoid", "Animator"},
 	Humanoid = {"Humanoid"},
-	BreakJointsOnDeath = false,
-	HasDefaultAnimate = true,
 	RootPart = {"HumanoidRootPart"},
+	CameraSubject = {"Head"},
 	Limbs = {
 		["HumanoidRootPart"] = {"HumanoidRootPart"},
 		["Head"] = {"Head"},
