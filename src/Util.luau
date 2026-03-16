@@ -57,7 +57,7 @@ local function NewSocket(attachment0: Attachment, attachment1: Attachment, socke
 	return socket
 end
 
-local function QueryInstance(parent: Instance, path: Types.PathArray?): any?
+local function QueryInstance(parent: Instance, path: Types.QueryPath?): any?
 	if not path then return nil end
 	return InstanceQuery:Get(parent, path)
 end

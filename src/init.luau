@@ -5,18 +5,15 @@ local RagdollService = {}
 
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Util = require(script.Util)
 local Types = require(script.Types)
 local RigConfigs = require(script.RigConfigs)
-local InstanceQuery = require(script.InstanceQuery)
 local RagdollBuilder = require(script.RagdollBuilder)
 
 local IsServer = RunService:IsServer()
 local IsClient = RunService:IsClient()
 
-local RAGDOLL_FOLDER_NAME = "RagdollService"
 local RAGDOLL_REMOTE_NAME = "LocalPlayerRagdollRemote"
 
 type CharacterRagdollInfo = Types.CharacterRagdollInfo
@@ -222,7 +219,7 @@ local function ActivateRagdoll(character: Model): boolean
 	if info.Animator then
 		local animator = info.Animator
 		for _, track in animator:GetPlayingAnimationTracks() do
-			track:Stop(0)
+			track:Stop()
 		end
 	end
 
@@ -244,7 +241,6 @@ local function DeactivateRagdoll(character: Model): boolean
 	if info.Humanoid then
 		Util.ToggleHumanoidRagdoll(false, info.Humanoid)
 	end
-	
 	Util.ToggleRagdollComponents(false, info)
 	
 	if IsServer then
@@ -288,7 +284,7 @@ if IsServer then
 	LocalPlayerRagdollRemote.Name = RAGDOLL_REMOTE_NAME
 	LocalPlayerRagdollRemote.Parent = script
 else
-	local LocalPlayerRagdollRemote = script:FindFirstChild(RAGDOLL_REMOTE_NAME) :: RemoteEvent
+	LocalPlayerRagdollRemote = script:FindFirstChild(RAGDOLL_REMOTE_NAME) :: RemoteEvent
 	if LocalPlayerRagdollRemote then
 		ConnectLocalPlayerRagdollRemote(LocalPlayerRagdollRemote)
 	end

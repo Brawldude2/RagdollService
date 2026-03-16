@@ -28,7 +28,7 @@ export type LocalPlayerRagdollInfo = {
 
 -- Path array is a relative path to a certain instance from Character
 -- Example: Animator path -> {"Humanoid", "Animator"}
-export type PathArray = {string}
+export type QueryPath = {string}
 export type AttachmentConfig = {
 	Limb: string,
 	Position: Vector3?,
@@ -42,12 +42,12 @@ export type SocketLimits = {
 }
 export type NoCollisionConfig = {string}
 export type RigConfig = {
-	Animator: PathArray?,
-	Humanoid: PathArray?,
-	RootPart: PathArray,
-	CameraSubject: PathArray?,
-	Joints: {[string]: PathArray},
-	Limbs: {[string]: PathArray},
+	Animator: QueryPath?,
+	Humanoid: QueryPath?,
+	RootPart: QueryPath,
+	CameraSubject: QueryPath?,
+	Joints: {[string]: QueryPath},
+	Limbs: {[string]: QueryPath},
 	Sockets: {[string]: SocketLimits},
 	NoCollisionConstraints: {NoCollisionConfig},
 }
