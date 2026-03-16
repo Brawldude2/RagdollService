@@ -108,11 +108,11 @@ local function DeactivateLocalPlayerRagdoll(ragdoll_type: string)
 		Util.ToggleHumanoidRagdoll(false, info.Humanoid)
 	end
 	
-	for _, info in info.SavedTracks do
-		local track = info.Track
+	for _, track_info in info.SavedTracks do
+		local track = track_info.Track
 		local timeposition = os.clock() - track.TimePosition
 		if track.Looped or timeposition < track.Length then
-			track:AdjustSpeed(info.Speed)
+			track:AdjustSpeed(track_info.Speed)
 			track.TimePosition = timeposition
 		end
 	end
@@ -145,7 +145,7 @@ local function IsPlayerRagdolled(player: Player): boolean
 end
 
 local function GetRigType(character: Model): string
-	local rig_type = character:GetAttribute("RigType")
+	local rig_type = character:GetAttribute("RigType") :: string?
 	if rig_type then return rig_type end
 	
 	local humanoid = character:FindFirstChildOfClass("Humanoid")

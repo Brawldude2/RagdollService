@@ -3,5 +3,5 @@
 /*.rbxlx
 /*.rbxl.lock
 /*.rbxlx.lock
-/*.vscode
+.vscode
 sourcemap.json
