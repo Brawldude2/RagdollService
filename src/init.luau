@@ -168,10 +168,10 @@ local function DestroyRagdoll(character: Model)
 	for _, no_collision in info.NoCollisionConstraints do
 		no_collision:Destroy()
 	end
-	for name, socket in info.Sockets do
+	for _, socket in info.Sockets do
 		socket:Destroy()
 	end
-	for name, attachment in info.Attachments do
+	for _, attachment in info.Attachments do
 		attachment:Destroy()
 	end
 	for _, c in info.Connections do
