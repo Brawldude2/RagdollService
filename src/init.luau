@@ -114,6 +114,8 @@ local function DeactivateLocalPlayerRagdoll(ragdoll_type: string)
 		if track.Looped or timeposition < track.Length then
 			track:AdjustSpeed(track_info.Speed)
 			track.TimePosition = timeposition
+		else
+			track:Stop()
 		end
 	end
 	
