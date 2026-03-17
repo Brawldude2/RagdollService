@@ -121,7 +121,6 @@ local function DeactivateLocalPlayerRagdoll(ragdoll_type: string)
 	
 	if info.PreviousCameraSubject then
 		Camera.CameraSubject = info.PreviousCameraSubject
-		info.PreviousCameraSubject = nil
 	end
 end
 
