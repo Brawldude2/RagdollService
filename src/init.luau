@@ -82,7 +82,7 @@ local function ActivateLocalPlayerRagdoll(ragdoll_type: string)
 	
 	local animator = info.Animator
 	if animator then
-		-- Wait for humanoid to step for Animate script compatibility
+		-- Let humanoid step once for Animate script compatibility
 		table.insert(info.Connections, RunService.PreSimulation:Once(function()
 			for _, track: AnimationTrack in animator:GetPlayingAnimationTracks() do
 				Util.SaveTrack(info.SavedTracks, track)
