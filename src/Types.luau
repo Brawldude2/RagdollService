@@ -16,7 +16,7 @@ export type CharacterRagdollInfo = {
 	Connections: {RBXScriptConnection},
 }
 export type LocalPlayerRagdollInfo = {
-	Charater: Model,
+	Character: Model,
 	CameraSubject: Instance?,
 	PreviousCameraSubject: Instance?,
 	Humanoid: Humanoid?,

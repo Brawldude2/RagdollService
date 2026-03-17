@@ -26,14 +26,14 @@ local LocalPlayerRagdollRemote: RemoteEvent
 
 local function InvalidateLocalPlayerRagdollInfo()
 	if not LocalPlayerRagdollInfo then return end
-	if Players.LocalPlayer.Character ~= LocalPlayerRagdollInfo.Charater then
+	if Players.LocalPlayer.Character ~= LocalPlayerRagdollInfo.Character then
 		LocalPlayerRagdollInfo = nil
 	end
 end
 
 local function CreateLocalPlayerRagdollInfo(character: Model, ragdoll_type: string): LocalPlayerRagdollInfo
 	local info: LocalPlayerRagdollInfo = {
-		Charater = character,
+		Character = character,
 		SavedTracks = {},
 		Connections = {},
 	} 
