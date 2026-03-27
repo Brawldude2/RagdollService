@@ -31,7 +31,7 @@ local function InvalidateLocalPlayerRagdollInfo()
 	end
 end
 
-local function CreateLocalPlayerRagdollInfo(character: Model, ragdoll_type: string): LocalPlayerRagdollInfo
+local function CreateLocalPlayerRagdollInfo(character: Model, ragdoll_type: Types.RigTypes): LocalPlayerRagdollInfo
 	local info: LocalPlayerRagdollInfo = {
 		Character = character,
 		SavedTracks = {},
@@ -55,7 +55,7 @@ local function CreateLocalPlayerRagdollInfo(character: Model, ragdoll_type: stri
 	return info
 end
 
-local function ActivateLocalPlayerRagdoll(ragdoll_type: string)
+local function ActivateLocalPlayerRagdoll(ragdoll_type: Types.RigTypes)
 	InvalidateLocalPlayerRagdollInfo()
 	if LocalPlayerRagdollInfo then return end
 	
@@ -94,7 +94,7 @@ local function ActivateLocalPlayerRagdoll(ragdoll_type: string)
 	end
 end
 
-local function DeactivateLocalPlayerRagdoll(ragdoll_type: string)
+local function DeactivateLocalPlayerRagdoll(ragdoll_type: Types.RigTypes)
 	InvalidateLocalPlayerRagdollInfo()
 	if not LocalPlayerRagdollInfo then return end
 	local info = LocalPlayerRagdollInfo
@@ -146,7 +146,7 @@ local function IsPlayerRagdolled(player: Player): boolean
 end
 
 local function GetRigType(character: Model): string
-	local rig_type = character:GetAttribute("RigType") :: string?
+	local rig_type = character:GetAttribute("RigType") :: Types.RigTypes?
 	if rig_type then return rig_type end
 	
 	local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -180,7 +180,7 @@ local function DestroyRagdoll(character: Model)
 	CharacterRagdollInfos[character] = nil
 end
 
-local function SetupRagdoll(character: Model, rig_type: string?): boolean
+local function SetupRagdoll(character: Model, rig_type: Types.RigTypes?): boolean
 	assert(Util.IsModel(character), "Character is not model.")
 	if not character:IsDescendantOf(workspace) then return false end
 	
@@ -233,7 +233,7 @@ local function ActivateRagdoll(character: Model): boolean
 end
 
 local function DeactivateRagdoll(character: Model): boolean
-	assert(Util.IsModel(character), "Character is not model.")
+	assert(Util.IsModel(character), "Character is not a model.")
 	
 	local info = CharacterRagdollInfos[character]
 	if not info or not info.Ragdolled then return false end
@@ -254,8 +254,8 @@ local function DeactivateRagdoll(character: Model): boolean
 	return true
 end
 
-local function Ragdoll(character: Model, rig_type: string?): boolean
-	assert(Util.IsModel(character), "Character is not model.")
+local function Ragdoll(character: Model, rig_type: Types.RigTypes?): boolean
+	assert(Util.IsModel(character), "Character is not a model.")
 	
 	local info = CharacterRagdollInfos[character]
 	if not info then

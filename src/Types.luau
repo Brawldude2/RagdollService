@@ -51,5 +51,6 @@ export type RigConfig = {
 	Sockets: {[string]: SocketLimits},
 	NoCollisionConstraints: {NoCollisionConfig},
 }
+export type RigTypes = "Generic"|"R6"|"R15"
 
 return nil
