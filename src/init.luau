@@ -18,6 +18,7 @@ local RAGDOLL_REMOTE_NAME = "LocalPlayerRagdollRemote"
 
 type CharacterRagdollInfo = Types.CharacterRagdollInfo
 type LocalPlayerRagdollInfo = Types.LocalPlayerRagdollInfo
+type RigTypes = Types.RigTypes
 
 local Camera = workspace.CurrentCamera
 local CharacterRagdollInfos = {} :: {[Model]: CharacterRagdollInfo}
@@ -31,7 +32,7 @@ local function InvalidateLocalPlayerRagdollInfo()
 	end
 end
 
-local function CreateLocalPlayerRagdollInfo(character: Model, ragdoll_type: string): LocalPlayerRagdollInfo
+local function CreateLocalPlayerRagdollInfo(character: Model, ragdoll_type: RigTypes): LocalPlayerRagdollInfo
 	local info: LocalPlayerRagdollInfo = {
 		Character = character,
 		SavedTracks = {},
@@ -55,7 +56,7 @@ local function CreateLocalPlayerRagdollInfo(character: Model, ragdoll_type: stri
 	return info
 end
 
-local function ActivateLocalPlayerRagdoll(ragdoll_type: string)
+local function ActivateLocalPlayerRagdoll(ragdoll_type: RigTypes)
 	InvalidateLocalPlayerRagdollInfo()
 	if LocalPlayerRagdollInfo then return end
 	
@@ -94,7 +95,7 @@ local function ActivateLocalPlayerRagdoll(ragdoll_type: string)
 	end
 end
 
-local function DeactivateLocalPlayerRagdoll(ragdoll_type: string)
+local function DeactivateLocalPlayerRagdoll(ragdoll_type: RigTypes)
 	InvalidateLocalPlayerRagdollInfo()
 	if not LocalPlayerRagdollInfo then return end
 	local info = LocalPlayerRagdollInfo
@@ -125,7 +126,7 @@ local function DeactivateLocalPlayerRagdoll(ragdoll_type: string)
 end
 
 local function ConnectLocalPlayerRagdollRemote(remote: RemoteEvent)
-	remote.OnClientEvent:Connect(function(enabled: boolean, ragdoll_type: string)
+	remote.OnClientEvent:Connect(function(enabled: boolean, ragdoll_type: RigTypes)
 		if enabled then
 			ActivateLocalPlayerRagdoll(ragdoll_type)
 		else
@@ -145,8 +146,8 @@ local function IsPlayerRagdolled(player: Player): boolean
 	return IsRagdolled(player.Character)
 end
 
-local function GetRigType(character: Model): string
-	local rig_type = character:GetAttribute("RigType") :: string?
+local function GetRigType(character: Model): RigTypes
+	local rig_type = character:GetAttribute("RigType") :: RigTypes?
 	if rig_type then return rig_type end
 	
 	local humanoid = character:FindFirstChildOfClass("Humanoid")
@@ -180,7 +181,7 @@ local function DestroyRagdoll(character: Model)
 	CharacterRagdollInfos[character] = nil
 end
 
-local function SetupRagdoll(character: Model, rig_type: string?): boolean
+local function SetupRagdoll(character: Model, rig_type: RigTypes?): boolean
 	assert(Util.IsModel(character), "Character is not model.")
 	if not character:IsDescendantOf(workspace) then return false end
 	
@@ -233,7 +234,7 @@ local function ActivateRagdoll(character: Model): boolean
 end
 
 local function DeactivateRagdoll(character: Model): boolean
-	assert(Util.IsModel(character), "Character is not model.")
+	assert(Util.IsModel(character), "Character is not a model.")
 	
 	local info = CharacterRagdollInfos[character]
 	if not info or not info.Ragdolled then return false end
@@ -254,8 +255,8 @@ local function DeactivateRagdoll(character: Model): boolean
 	return true
 end
 
-local function Ragdoll(character: Model, rig_type: string?): boolean
-	assert(Util.IsModel(character), "Character is not model.")
+local function Ragdoll(character: Model, rig_type: RigTypes?): boolean
+	assert(Util.IsModel(character), "Character is not a model.")
 	
 	local info = CharacterRagdollInfos[character]
 	if not info then
