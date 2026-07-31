@@ -225,8 +225,9 @@ local function ActivateRagdoll(character: Model): boolean
 	end
 
 	-- Break the ragdoll balance on server if owned by server on client if local rig
-	if info.RootPart and (IsClient or info.RootPart:GetNetworkOwner() == nil) then
-		info.RootPart:ApplyAngularImpulse(info.RootPart.CFrame.RightVector * 50)
+	local rootPart = info.RootPart
+	if rootPart and (IsClient or (rootPart:CanSetNetworkOwnership() and rootPart:GetNetworkOwner() == nil)) then
+		rootPart:ApplyAngularImpulse(rootPart.CFrame.RightVector * 50)
 	end
 
 	return true
