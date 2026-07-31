@@ -55,26 +55,7 @@ local Config: Types.RigConfig = {
 		LeftKnee = {"LeftLowerLeg","LeftKnee"},
 		LeftAnkle = {"LeftFoot","LeftAnkle"},
 	},
-	Sockets = {
-		Neck = NECK_LIMITS,
-		Waist = WAIST_LIMITS,
-		
-		LeftShoulder = SHOULDER_LIMITS,
-		LeftElbow = ELBOW_LIMITS,
-		LeftWrist = WRIST_LIMITS,
-
-		RightShoulder = SHOULDER_LIMITS,
-		RightElbow = ELBOW_LIMITS,
-		RightWrist = WRIST_LIMITS,
-
-		RightHip = HIP_LIMITS,
-		RightKnee = KNEE_LIMITS,
-		RightAnkle = ANKLE_LIMITS,
-
-		LeftHip = HIP_LIMITS,
-		LeftKnee = KNEE_LIMITS,
-		LeftAnkle = ANKLE_LIMITS,
-	},
+	Sockets = {}, -- AJU already provides all ball socket constraints
 	NoCollisionConstraints = {
 		{"HumanoidRootPart","UpperTorso"},
 		{"HumanoidRootPart","LowerTorso"},

@@ -9,7 +9,7 @@ export type CharacterRagdollInfo = {
 	Humanoid: Humanoid?,
 	RootPart: BasePart?,
 	Limbs: {[string]: BasePart},
-	Joints: {[string]: Motor6D},
+	Joints: {[string]: Motor6D | AnimationConstraint},
 	Sockets: {[string]: BallSocketConstraint},
 	Attachments: {Attachment},
 	NoCollisionConstraints: {NoCollisionConstraint},

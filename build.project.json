@@ -1,0 +1,11 @@
+{
+  "name": "RagdollService",
+  "tree": {
+    "$path": "src",
+    "$properties": {
+      "Attributes": {
+        "Version": {"String": "2.1"}
+      }
+    }
+  }
+}

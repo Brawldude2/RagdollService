@@ -19,7 +19,7 @@ local RAGDOLL_REMOTE_NAME = "LocalPlayerRagdollRemote"
 type CharacterRagdollInfo = Types.CharacterRagdollInfo
 type LocalPlayerRagdollInfo = Types.LocalPlayerRagdollInfo
 
-local Camera = workspace.CurrentCamera
+local Camera = workspace.CurrentCamera :: Camera
 local CharacterRagdollInfos = {} :: {[Model]: CharacterRagdollInfo}
 local LocalPlayerRagdollInfo: LocalPlayerRagdollInfo? = nil
 local LocalPlayerRagdollRemote: RemoteEvent

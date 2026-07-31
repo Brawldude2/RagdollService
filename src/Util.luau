@@ -17,7 +17,7 @@ end
 
 local function StudioWarn(msg: string)
 	if not IsStudio then return end
-	debug.traceback(`[RagdollService]: {msg}`)
+	warn(debug.traceback(`[RagdollService]: {msg}`))
 end
 
 local function NewAttachment(cframe: CFrame, parent: BasePart): Attachment
@@ -91,8 +91,8 @@ local function ToggleHumanoidRagdoll(ragdolled: boolean, humanoid: Humanoid)
 end
 
 local function ToggleRagdollComponents(ragdolled: boolean, info: CharacterRagdollInfo)
-	for _, motor6d in info.Joints do
-		motor6d.Enabled = not ragdolled
+	for _, joint in info.Joints do
+		(joint :: Motor6D).Enabled = not ragdolled
 	end
 
 	for _, no_collision in info.NoCollisionConstraints do
