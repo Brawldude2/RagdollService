@@ -12,7 +12,7 @@ type SavedTracks = Types.SavedTracks
 type CharacterRagdollInfo = Types.CharacterRagdollInfo
 
 local function IsModel(value: any)
-	return typeof(value) == "Instance" and value:IsA("Model")
+	return typeof(value) == "Instance" and (value :: Instance):IsA("Model")
 end
 
 local function StudioWarn(msg: string)

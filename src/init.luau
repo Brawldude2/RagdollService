@@ -21,12 +21,13 @@ type LocalPlayerRagdollInfo = Types.LocalPlayerRagdollInfo
 
 local Camera = workspace.CurrentCamera :: Camera
 local CharacterRagdollInfos = {} :: {[Model]: CharacterRagdollInfo}
+local LocalPlayer = Players.LocalPlayer :: Player
 local LocalPlayerRagdollInfo: LocalPlayerRagdollInfo? = nil
 local LocalPlayerRagdollRemote: RemoteEvent
 
 local function InvalidateLocalPlayerRagdollInfo()
 	if not LocalPlayerRagdollInfo then return end
-	if Players.LocalPlayer.Character ~= LocalPlayerRagdollInfo.Character then
+	if LocalPlayer.Character ~= LocalPlayerRagdollInfo.Character then
 		LocalPlayerRagdollInfo = nil
 	end
 end
